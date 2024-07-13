@@ -1,5 +1,5 @@
 export interface IProps {
-	onPress: () => any;
+	onPress: () => void;
 	title: string;
 	disabled?: boolean;
 }

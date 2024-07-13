@@ -1,14 +1,10 @@
-import { StatusBar } from 'expo-status-bar';
 import { TextInput as TextInputNative, StyleSheet, View, Text } from 'react-native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { StackScreens } from '../../App';
 import colors from "../../styles/colors";
 import React, { Component, createRef } from "react";
 import { connect } from "react-redux";
 import { logIn } from "../../actions/auth";
 import Button from "../../components/button";
 import TextInput from "../../components/text-input";
-import { IAppState } from "../../models";
 import { Dispatch } from "../../types";
 
 export interface IOwnProps { }
@@ -93,10 +89,9 @@ class LoginScreen extends Component<IProps, IState> {
 	}
 }
 
-const mapStateToProps = (state: IAppState, ownProps: IOwnProps): IStateProps => ({});
 const mapDispatchToProps = (dispatch: Dispatch): IDispatchProps => ({ dispatch });
 
-const ConnectedLoginScreen = connect(mapStateToProps, mapDispatchToProps)(LoginScreen);
+const ConnectedLoginScreen = connect(null, mapDispatchToProps)(LoginScreen);
 
 export default ConnectedLoginScreen;
 

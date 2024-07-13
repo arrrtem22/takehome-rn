@@ -10,14 +10,6 @@ export const authStorageMiddleware: Middleware = () => next => (
 			AuthStorage.setToken(action.token);
 			break;
 		}
-		case AuthActionTypes.LOG_OUT_SUCCESS: {
-			AuthStorage.removeToken();
-			break;
-		}
-		case AuthActionTypes.SESSION_EXPIRED: {
-			AuthStorage.removeToken();
-			break;
-		}
 	}
 	return next(action);
 };
