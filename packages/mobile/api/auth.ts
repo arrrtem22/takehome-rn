@@ -2,8 +2,6 @@ import axios from 'axios';
 import CONFIG from './config';
 
 function login(username: string, password: string): Promise<string> {
-    console.log(username + password)
-    console.log(CONFIG.baseUrl)
     return new Promise((resolve, reject) => {
         axios.post(`${CONFIG.baseUrl}auth/login`, {
             username: username,

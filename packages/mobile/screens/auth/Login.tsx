@@ -1,13 +1,19 @@
+import React, { useState, useRef } from 'react';
 import { TextInput as TextInputNative, StyleSheet, View, Text } from 'react-native';
 import colors from "../../styles/colors";
-import React, { Component, createRef } from "react";
 import { connect } from "react-redux";
 import { logIn } from "../../actions/auth";
 import Button from "../../components/button";
 import TextInput from "../../components/text-input";
 import { Dispatch } from "../../types";
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { StackScreens } from '../../App';
+import { useNavigation } from '@react-navigation/native';
+import {useCallback} from 'react';
 
 export interface IOwnProps { }
+
+type LoginScreenNavigationProp = NativeStackScreenProps<StackScreens, 'Login'>;
 
 export interface IStateProps { }
 
@@ -18,83 +24,68 @@ export interface IDispatchProps {
 export interface IProps
 	extends IOwnProps,
 	IStateProps,
-	IDispatchProps { }
-
-export interface IState {
-	username: string;
-	password: string;
+	IDispatchProps,
+	LoginScreenNavigationProp {
 }
 
-class LoginScreen extends Component<IProps, IState> {
-	inputRef: { [key: string]: React.RefObject<TextInputNative> } = {
-        username: createRef(),
-        password: createRef(),
-    };
-
-	constructor(props: IProps) {
-		super(props);
-		this.state = {
-			username: "",
-			password: ""
-		};
-	}
-
-	onChangeEmail = (value: string) => {
-		this.setState({
-			username: value
-		});
+const LoginScreen: React.FC<IProps> = ({ dispatch }) => {
+	const [username, setUsername] = useState("");
+	const [password, setPassword] = useState("");
+	const navigation = useNavigation<LoginScreenNavigationProp['navigation']>();
+	const inputRefs = {
+		username: useRef<TextInputNative>(null),
+		password: useRef<TextInputNative>(null),
 	};
 
-	onChangePassword = (value: string) => {
-		this.setState({
-			password: value
-		});
+	const onChangeEmail = (value: string) => {
+		setUsername(value);
 	};
 
-	addInputRef = (id: string, ref: React.RefObject<TextInputNative>) => {
-        this.inputRef[id] = ref;
-    };
+	const onChangePassword = (value: string) => {
+		setPassword(value);
+	};
 
-	logIn = () => this.props.dispatch(logIn(this.state.username, this.state.password));
+	const navigateToWebView = useCallback(() => navigation.navigate('App'), [navigation?.navigate]);
 
-	render() {
-		return (
-			<View style={style.login}>
-				<Text style={style.loginFormText}>
-					Log in with your personal account.
-				</Text>
-				<TextInput
-					label="username"
-					value={this.state.username}
-					onChangeText={this.onChangeEmail}
-					autoCorrect={false}
-					inputRef={this.inputRef.username}
-					onSubmitEditing={() => this.inputRef.password.current?.focus()}
-				/>
-				<TextInput
-					label="password"
-					value={this.state.password}
-					onChangeText={this.onChangePassword}
-					secureTextEntry={true}
-					style={style.loginFormPassword}
-					autoCorrect={false}
-					inputRef={this.inputRef.password}
-					onSubmitEditing={this.logIn}
-				/>
-				<View style={style.loginFormButton}>
-					<Button title="Log In" onPress={this.logIn} />
-				</View>
+	const logInHandler = () => {
+		dispatch(logIn(username, password, navigateToWebView));
+	};
+
+	return (
+		<View style={style.login}>
+			<Text style={style.loginFormText}>
+				Log in with your personal account.
+			</Text>
+			<TextInput
+				label="username"
+				value={username}
+				onChangeText={onChangeEmail}
+				autoCorrect={false}
+				inputRef={inputRefs.username}
+				onSubmitEditing={() => inputRefs.password.current?.focus()}
+			/>
+			<TextInput
+				label="password"
+				value={password}
+				onChangeText={onChangePassword}
+				secureTextEntry={true}
+				style={style.loginFormPassword}
+				autoCorrect={false}
+				inputRef={inputRefs.password}
+				onSubmitEditing={logInHandler}
+			/>
+			<View style={style.loginFormButton}>
+				<Button title="Log In" onPress={logInHandler} />
 			</View>
-		);
-	}
-}
+		</View>
+	);
+};
 
 const mapDispatchToProps = (dispatch: Dispatch): IDispatchProps => ({ dispatch });
 
-const ConnectedLoginScreen = connect(null, mapDispatchToProps)(LoginScreen);
+const ConnectedLoginScreen = connect((state, ownProps) => ({ownProps}), mapDispatchToProps)(LoginScreen);
 
 export default ConnectedLoginScreen;
-
 
 const style = StyleSheet.create({
 	login: {

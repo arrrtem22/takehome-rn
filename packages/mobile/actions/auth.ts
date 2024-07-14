@@ -47,13 +47,17 @@ export const logInFailure: LogInFailure = error => ({
 	error: error
 });
 
-export const logIn: AsyncActionCreator = (username: string, password: string) => {
+export const logIn: AsyncActionCreator = (
+	username: string,
+	password: string,
+	navigateCallback: any
+) => {
 	return async (dispatch) => {
 		dispatch(logInRequest());
 		try {
 			const token = await userService.login(username, password)
 			dispatch(logInSuccess(token));
-			// NavigationService.navigate("App");
+			navigateCallback.call();
 		} catch (e) {
 			let errorMessage = 'An unknown error occurred';
 
@@ -66,7 +70,6 @@ export const logIn: AsyncActionCreator = (username: string, password: string) =>
 			}
 
 			dispatch(logInFailure(errorMessage));
-			console.log('Error:', errorMessage);
 		}
 	};
 };

@@ -7,7 +7,7 @@ import Home from './screens/home/Home';
 import WebView from './screens/webview/WebView';
 import ConnectedLoginScreen from './screens/auth/Login';
 import Register from './screens/auth/Register';
-import createStore from "./store";
+import createStore from "./services/store";
 
 export type StackScreens = {
   Home: undefined,
