@@ -9,13 +9,15 @@ import { Dispatch } from "../../types";
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { StackScreens } from '../../App';
 import { useNavigation } from '@react-navigation/native';
-import {useCallback} from 'react';
+import { useCallback } from 'react';
 
 export interface IOwnProps { }
 
 type LoginScreenNavigationProp = NativeStackScreenProps<StackScreens, 'Login'>;
 
-export interface IStateProps { }
+export interface IStateProps {
+	error: string | null;
+}
 
 export interface IDispatchProps {
 	dispatch: Dispatch;
@@ -28,7 +30,7 @@ export interface IProps
 	LoginScreenNavigationProp {
 }
 
-const LoginScreen: React.FC<IProps> = ({ dispatch }) => {
+const LoginScreen: React.FC<IProps> = ({ dispatch, error }) => {
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
 	const navigation = useNavigation<LoginScreenNavigationProp['navigation']>();
@@ -37,7 +39,7 @@ const LoginScreen: React.FC<IProps> = ({ dispatch }) => {
 		password: useRef<TextInputNative>(null),
 	};
 
-	const onChangeEmail = (value: string) => {
+	const onChangeUsername = (value: string) => {
 		setUsername(value);
 	};
 
@@ -56,10 +58,11 @@ const LoginScreen: React.FC<IProps> = ({ dispatch }) => {
 			<Text style={style.loginFormText}>
 				Log in with your personal account.
 			</Text>
+			{error && <Text style={style.errorText}>{error}</Text>}
 			<TextInput
 				label="username"
 				value={username}
-				onChangeText={onChangeEmail}
+				onChangeText={onChangeUsername}
 				autoCorrect={false}
 				inputRef={inputRefs.username}
 				onSubmitEditing={() => inputRefs.password.current?.focus()}
@@ -81,9 +84,13 @@ const LoginScreen: React.FC<IProps> = ({ dispatch }) => {
 	);
 };
 
+const mapStateToProps = (state: any): IStateProps => ({
+	error: state.auth.error,
+});
+
 const mapDispatchToProps = (dispatch: Dispatch): IDispatchProps => ({ dispatch });
 
-const ConnectedLoginScreen = connect((state, ownProps) => ({ownProps}), mapDispatchToProps)(LoginScreen);
+const ConnectedLoginScreen = connect(mapStateToProps, mapDispatchToProps)(LoginScreen);
 
 export default ConnectedLoginScreen;
 
@@ -103,5 +110,9 @@ const style = StyleSheet.create({
 		flex: 1,
 		alignItems: "flex-end",
 		marginTop: 40
-	}
+	},
+	errorText: {
+		color: 'red',
+		marginBottom: 20,
+	},
 });

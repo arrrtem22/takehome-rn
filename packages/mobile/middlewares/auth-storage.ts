@@ -10,6 +10,10 @@ export const authStorageMiddleware: Middleware = () => next => (
 			AuthStorage.setToken(action.token);
 			break;
 		}
+		case AuthActionTypes.REGISTER_SUCCESS: {
+			AuthStorage.setToken(action.token);
+			break;
+		}
 	}
 	return next(action);
 };

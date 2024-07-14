@@ -1,5 +1,6 @@
-import { AuthAction } from "../actions/auth";
+import { AuthAction, AuthActionTypes } from "../actions/auth";
 import { IAuthState } from "../models/auth";
+
 
 const initialAuthState: IAuthState = {
 	logging: false,
@@ -12,51 +13,41 @@ export default function authReducer(
 	action: AuthAction
 ) {
 	switch (action.type) {
-		case "LOG_IN_REQUEST":
+		case AuthActionTypes.LOG_IN_REQUEST:
 			return {
 				...state,
 				logging: true,
 				error: ""
 			};
-		case "LOG_IN_SUCCESS":
+		case AuthActionTypes.LOG_IN_SUCCESS:
 			return {
 				...state,
 				logging: false,
 				token: action.token
 			};
-		case "LOG_IN_FAILURE":
+		case AuthActionTypes.LOG_IN_FAILURE:
 			return {
 				...state,
 				logging: false,
 				error: action.error
 			};
-		case "LOG_IN_FROM_STORAGE":
-			return {
-				...state,
-				token: action.token
-			};
-		case "LOG_OUT_REQUEST":
+		case AuthActionTypes.REGISTER_REQUEST:
 			return {
 				...state,
 				logging: true,
 				error: ""
 			};
-		case "LOG_OUT_SUCCESS":
+		case AuthActionTypes.REGISTER_SUCCESS:
 			return {
 				...state,
 				logging: false,
-				token: ""
+				token: action.token
 			};
-		case "LOG_OUT_FAILURE":
+		case AuthActionTypes.REGISTER_FAILURE:
 			return {
 				...state,
 				logging: false,
 				error: action.error
-			};
-		case "SESSION_EXPIRED":
-			return {
-				...state,
-				token: ""
 			};
 		default:
 			return state;

@@ -1,17 +1,23 @@
 import { AsyncActionCreator } from "../types";
-import { userService } from "../api/auth"
+import { userService } from "../api/auth-api"
 import axios from "axios";
 
 export enum AuthActionTypes {
 	LOG_IN_REQUEST = "LOG_IN_REQUEST",
 	LOG_IN_SUCCESS = "LOG_IN_SUCCESS",
 	LOG_IN_FAILURE = "LOG_IN_FAILURE",
+	REGISTER_REQUEST = "REGISTER_REQUEST",
+	REGISTER_SUCCESS = "REGISTER_SUCCESS",
+	REGISTER_FAILURE = "REGISTER_FAILURE",
 }
 
 export type AuthAction =
 	| ReturnType<LogInRequest>
 	| ReturnType<LogInSuccess>
-	| ReturnType<LogInFailure>;
+	| ReturnType<LogInFailure>
+	| ReturnType<RegisterRequest>
+	| ReturnType<RegisterSuccess>
+	| ReturnType<RegisterFailure>;
 
 // Log In
 
@@ -70,6 +76,67 @@ export const logIn: AsyncActionCreator = (
 			}
 
 			dispatch(logInFailure(errorMessage));
+		}
+	};
+};
+
+// Register
+
+export type RegisterRequest = () => {
+	type: AuthActionTypes.REGISTER_REQUEST;
+};
+
+export type RegisterSuccess = (
+	token: string
+) => {
+	type: AuthActionTypes.REGISTER_SUCCESS;
+	token: string;
+};
+
+export type RegisterFailure = (
+	error: string
+) => {
+	type: AuthActionTypes.REGISTER_FAILURE;
+	error: string;
+};
+
+export const registerRequest: RegisterRequest = () => ({
+	type: AuthActionTypes.REGISTER_REQUEST
+});
+
+export const registerSuccess: RegisterSuccess = token => ({
+	type: AuthActionTypes.REGISTER_SUCCESS,
+	token: token
+});
+
+export const registerFailure: RegisterFailure = error => ({
+	type: AuthActionTypes.REGISTER_FAILURE,
+	error: error
+});
+
+export const register: AsyncActionCreator = (
+	username: string,
+	password: string,
+	navigateCallback: any
+) => {
+	return async (dispatch) => {
+		dispatch(registerRequest());
+		try {
+			const token = await userService.register(username, password)
+			dispatch(registerSuccess(token));
+			navigateCallback.call();
+		} catch (e) {
+			let errorMessage = 'An unknown error occurred';
+
+			if (axios.isAxiosError(e)) {
+				if (e.response) {
+					errorMessage = e.response.data.message || e.response.statusText;
+				}
+			} else if (e instanceof Error) {
+				errorMessage = e.message;
+			}
+
+			dispatch(registerFailure(errorMessage));
 		}
 	};
 };
