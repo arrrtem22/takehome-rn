@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View, Text } from 'react-native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { StackScreens } from '../../App';
 import { WebView as NativeWebView } from 'react-native-webview';
 import AuthStorage from '../../services/auth-storage';
 import CONFIG from '../../api/config';
 
-export default function WebView({ }: NativeStackScreenProps<StackScreens, 'App'>) {
+export default function WebView() {
   const [token, setToken] = useState<string | null>(null);
 
   const webAppRoot = CONFIG.webappUrl;

@@ -56,14 +56,14 @@ export const logInFailure: LogInFailure = error => ({
 export const logIn: AsyncActionCreator = (
 	username: string,
 	password: string,
-	navigateCallback: any
+	navigateCallback: () => void
 ) => {
 	return async (dispatch) => {
 		dispatch(logInRequest());
 		try {
 			const token = await userService.login(username, password)
 			dispatch(logInSuccess(token));
-			navigateCallback.call();
+			navigateCallback();
 		} catch (e) {
 			let errorMessage = 'An unknown error occurred';
 
@@ -117,14 +117,14 @@ export const registerFailure: RegisterFailure = error => ({
 export const register: AsyncActionCreator = (
 	username: string,
 	password: string,
-	navigateCallback: any
+	navigateCallback: () => void
 ) => {
 	return async (dispatch) => {
 		dispatch(registerRequest());
 		try {
 			const token = await userService.register(username, password)
 			dispatch(registerSuccess(token));
-			navigateCallback.call();
+			navigateCallback();
 		} catch (e) {
 			let errorMessage = 'An unknown error occurred';
 

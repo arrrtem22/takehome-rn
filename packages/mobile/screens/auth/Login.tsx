@@ -10,6 +10,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { StackScreens } from '../../App';
 import { useNavigation } from '@react-navigation/native';
 import { useCallback } from 'react';
+import { IAppState } from '../../models';
 
 export interface IOwnProps { }
 
@@ -84,7 +85,7 @@ const LoginScreen: React.FC<IProps> = ({ dispatch, error }) => {
 	);
 };
 
-const mapStateToProps = (state: any): IStateProps => ({
+const mapStateToProps = (state: IAppState): IStateProps => ({
 	error: state.auth.error,
 });
 
